@@ -1,0 +1,66 @@
+#map,
+html,
+body {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+}
+
+#panel {
+    width: 200px;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    float: right;
+    margin: 10px;
+}
+
+#color-palette {
+    clear: both;
+}
+
+.color-button {
+    width: 14px;
+    height: 14px;
+    font-size: 0;
+    margin: 2px;
+    float: left;
+    cursor: pointer;
+}
+
+#delete-button {
+    margin-top: 5px;
+}
+
+.button-maps {
+    float: left;
+    line-height: 0;
+    display: none;
+}
+
+.button-maps div {
+    
+}
+
+.button-maps div span {
+    display: inline-block;
+}
+
+.button-maps div span div {
+    width: 16px; 
+    height: 16px; 
+    overflow: hidden; 
+    position: relative;
+}
+
+.button-maps div span div img {
+    position: absolute; 
+    left: 0px; 
+    top: 0px; 
+    user-select: none; 
+    border: 0px; 
+    padding: 0px; 
+    margin: 0px; 
+    max-width: none; 
+    width: 16px; 
+    height: 16px;
+}

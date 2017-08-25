@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Drawing tools</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <div class="button-maps" style="
+    margin-bottom: 5px;
+    margin-left: -6px;
+    float: left;
+    line-height: 0;
+    display: none;">
+        <div draggable="false" title="Escolha uma cor" style="
+        direction: ltr; 
+        overflow: hidden; 
+        text-align: left; 
+        position: relative; 
+        color: rgb(86, 86, 86); 
+        font-family: Roboto, Arial, sans-serif; 
+        user-select: none; font-size: 11px; 
+        background-color: rgb(255, 255, 255); 
+        padding: 4px; 
+        border-bottom-right-radius: 2px; 
+        border-top-right-radius: 2px; 
+        -webkit-background-clip: padding-box; 
+        background-clip: padding-box; 
+        box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px; 
+        border-left: 0px;">
+            <span style="display: inline-block;">
+                <div style="
+                width: 16px; 
+                height: 16px; 
+                overflow: hidden; 
+                position: relative;">
+                    <img src="https://media.flaticon.com/img/colorwheel.png" draggable="false" style="
+                    position: absolute; 
+                    left: 0px; 
+                    top: 0px; 
+                    user-select: none; 
+                    border: 0px; 
+                    padding: 0px; 
+                    margin: 0px; 
+                    max-width: none; 
+                    width: 16px; 
+                    height: 16px;">
+                </div>
+            </span>
+        </div>
+    </div>
+    <div id="panel" style="display: none">
+        <div id="color-palette"></div>
+    </div>
+    <div id="map"></div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDLPqv4eShDlfF44VhXERxeYJzs7yhBckA&callback=initMap&libraries=drawing"
+        async defer></script>
+    <script src="index.js"></script>
+    </script>
+</body>
+
+</html>
