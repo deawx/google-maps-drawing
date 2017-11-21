@@ -12,6 +12,7 @@ body {
     font-size: 13px;
     float: right;
     margin: 10px;
+    display: none
 }
 
 #color-palette {
@@ -24,7 +25,6 @@ body {
     font-size: 0;
     margin: 2px;
     float: left;
-    cursor: pointer;
 }
 
 #delete-button {
@@ -35,10 +35,8 @@ body {
     float: left;
     line-height: 0;
     display: none;
-}
-
-.button-maps div {
-    
+    margin-bottom: 5px;
+    margin-left: -6px;
 }
 
 .button-maps div span {
@@ -63,4 +61,46 @@ body {
     max-width: none; 
     width: 16px; 
     height: 16px;
+}
+
+.drawing-color{
+    direction: ltr; 
+    overflow: hidden; 
+    text-align: left; 
+    position: relative; 
+    color: rgb(86, 86, 86); 
+    font-family: Roboto, Arial, sans-serif; 
+    user-select: none; font-size: 11px; 
+    background-color: rgb(255, 255, 255); 
+    padding: 4px; 
+    border-bottom-right-radius: 2px; 
+    border-top-right-radius: 2px; 
+    -webkit-background-clip: padding-box; 
+    background-clip: padding-box; 
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px; 
+    border-left: 0px;
+}
+
+.drawing-color span{
+    display: inline-block;
+}
+
+.img-wheel-color{
+    position: absolute; 
+    left: 0px; 
+    top: 0px; 
+    user-select: none; 
+    border: 0px; 
+    padding: 0px; 
+    margin: 0px; 
+    max-width: none; 
+    width: 16px; 
+    height: 16px;
+}
+
+.img-container{
+    width: 16px; 
+    height: 16px; 
+    overflow: hidden; 
+    position: relative;
 }

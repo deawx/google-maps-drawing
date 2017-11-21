@@ -1,60 +1,62 @@
-
 var drawingManager;
-var all_overlays = [];
+var allShapes = [];
 var selectedShape;
 var colors = ['#ff4000', '#ff8000', '#ffbf00', '#ffff00', '#bfff00', '#80ff00', '#40ff00', '#00ff00', '#00ff40', '#00ff80', '#00ffbf', '#00ffff', '#00bfff', '#0080ff', '#0040ff', '#0000ff', '#4000ff', '#8000ff', '#bf00ff', '#ff00ff', '#ff00bf', '#ff0080', '#ff0040', '#ff0000'];
 var selectedColor;
 var colorButtons = {};
 
+/**
+ * Meothod to create a map.
+ */
 function initMap() {
+
+    // Init the options for map.
     var map = new google.maps.Map(document.getElementById('map'), {
         zoom: 10,
-        center: new google.maps.LatLng(22.344, 114.048),
+        center: new google.maps.LatLng(33.5276247, -112.264748),
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         disableDefaultUI: true,
         zoomControl: true
     });
 
-    var polyOptions = {
+    // Create the options to Objects Drawing.
+    var objectsDrawingOptions = {
         strokeWeight: 1,
         fillOpacity: 0.45,
         editable: true,
         draggable: true
     };
-    // Creates a drawing manager attached to the map that allows the user to draw
-    // markers, lines, and shapes.
+
+    // Create an instance og DrawingManager.
     drawingManager = new google.maps.drawing.DrawingManager({
         drawingMode: google.maps.drawing.OverlayType.HAND,
         drawingControl: true,
-        drawingControlOptions: {
-            position: google.maps.ControlPosition.BOTTOM_CENTER,
-            drawingModes: [
-                google.maps.drawing.OverlayType.CIRCLE,
-                google.maps.drawing.OverlayType.RECTANGLE,
-                google.maps.drawing.OverlayType.POLYGON
-            ]
-        },
-        rectangleOptions: polyOptions,
-        circleOptions: polyOptions,
-        polygonOptions: polyOptions,
+        drawingControlOptions: { position: google.maps.ControlPosition.BOTTOM_CENTER, drawingModes: [google.maps.drawing.OverlayType.CIRCLE, google.maps.drawing.OverlayType.RECTANGLE, google.maps.drawing.OverlayType.POLYGON] },
+        rectangleOptions: objectsDrawingOptions,
+        circleOptions: objectsDrawingOptions,
+        polygonOptions: objectsDrawingOptions,
         map: map
     });
 
-    google.maps.event.addListener(drawingManager, 'overlaycomplete', function (e) {
-        all_overlays.push(e);
+    // Added listener to drawing complete.
+    google.maps.event.addListener(drawingManager, 'overlaycomplete', (e) => {
+
+        allShapes.push(e);
+
         if (e.type != google.maps.drawing.OverlayType.MARKER) {
+
             drawingManager.setDrawingMode(null);
             var newShape = e.overlay;
             newShape.type = e.type;
-            google.maps.event.addListener(newShape, 'click', function () {
-                setSelection(newShape);
-            });
+            google.maps.event.addListener(newShape, 'click', () => setSelection(newShape));
             setSelection(newShape);
         }
     });
 
+    // Added listener to drawing change.
     google.maps.event.addListener(drawingManager, 'drawingmode_changed', clearSelection);
 
+    // Create buttons.
     var controlUIMain = document.createElement('div');
 
     controlUIMain.style.marginLeft = '-6px';
@@ -67,11 +69,12 @@ function initMap() {
     controlUIMain.style.marginBottom = '5px';
 
     controlUIMain.appendChild(buildElement({
-        clickCallBack: selectColor,
+        clickCallBack: openPallet,
         imageSrc: 'https://media.flaticon.com/img/colorwheel.png',
         title: 'Escolha uma cor',
         type: 'colorpicker'
     }));
+
     controlUIMain.appendChild(buildElement({
         clickCallBack: clearSelection,
         imageSrc: 'https://image.flaticon.com/icons/svg/34/34435.svg',
@@ -81,9 +84,14 @@ function initMap() {
 
     map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(controlUIMain);
 
+    // Build a color pallet.
     buildColorPalette();
 }
 
+/**
+ * Method to buld a button elemente.
+ * @param {*} param Param to aditional informations.
+ */
 function buildElement(param = {}) {
 
     var controlUIContent = document.createElement('div');
@@ -95,6 +103,7 @@ function buildElement(param = {}) {
     controlUIContent.style.float = 'left';
     controlUIContent.style.lineHeight = '0';
     controlUIContent.style.display = 'inline';
+    controlUIContent.style.cursor = 'pointer';
 
     controlUIContainer.style.direction = 'ltr';
     controlUIContainer.style.overflow = 'hidden';
@@ -111,13 +120,12 @@ function buildElement(param = {}) {
     controlUIContainer.style.boxShadow = 'rgba(0, 0, 0, 0.3) 0px 1px 4px -1px';
     controlUIContainer.style.borderLeft = '0px';
     controlUIContainer.draggable = false;
+
     if (param.title) controlUIContainer.title = param.title;
 
     controlUIContent.appendChild(controlUIContainer);
 
     controlUISpan.style.display = 'inline-block';
-
-    controlUIContainer.appendChild(controlUISpan);
 
     controlUIContainerImage.style.width = '16px';
     controlUIContainerImage.style.height = '16px';
@@ -125,6 +133,8 @@ function buildElement(param = {}) {
     controlUIContainerImage.style.position = 'relative';
 
     controlUISpan.appendChild(controlUIContainerImage);
+
+    controlUIContainer.appendChild(controlUISpan);
 
     controlUIImage.style.position = 'absolute';
     controlUIImage.style.left = '0px';
@@ -137,7 +147,12 @@ function buildElement(param = {}) {
     controlUIImage.style.width = '16px';
     controlUIImage.style.height = '16px';
     controlUIImage.draggable = false;
-    if (param.imageSrc) controlUIImage.src = param.imageSrc;
+
+    if (param.clickCallBack) 
+        controlUIImage.addEventListener('click', param.clickCallBack);
+
+    if (param.imageSrc) 
+        controlUIImage.src = param.imageSrc;
 
     controlUIContainerImage.appendChild(controlUIImage);
 
@@ -152,31 +167,12 @@ function buildElement(param = {}) {
         controlUIContainer.style.boxShadow = 'rgba(0, 0, 0, 0.3) 0px 1px 4px -1px';
     };
 
-    if (param.clickCallBack)
-
-        var div = document.createElement('div');
-        var label = document.createElement('label');
-        label.innerText = "Oi";
-        label.fontSize = '50';
-        div.appendChild(label);
-        div.style.position= 'absolute';
-        div.style.display = 'none';
-        div.style.bottom = '100px;'
-        div.style.backgroundColor = 'white';
-        div.style.zIndex = '999';
-        controlUIContent.appendChild(div);
-
-        controlUIContent.addEventListener('click', function (event) {
-            var parameter = null;
-            if (param.type === 'colorpicker') {
-                div.style.display = 'block';
-            }
-            param.clickCallBack(parameter);
-        });
-
     return controlUIContent;
 }
 
+/**
+ * Method to clear the shape selected.
+ */
 function clearSelection() {
     if (selectedShape) {
         selectedShape.setMap(null);
@@ -184,14 +180,32 @@ function clearSelection() {
     }
 }
 
+/**
+ * Method to open palet.
+ */
+function openPallet() {
+    var panel = document.getElementById('panel');
+    panel.style.display = panel.style.display == 'block' ? '' : 'block';
+};
+
+/**
+ * Method to set an shape selected.
+ * @param {*} shape Shape to set.
+ */
 function setSelection(shape) {
     selectedShape = shape;
     shape.setEditable(true);
     selectColor(shape.get('fillColor') || shape.get('strokeColor'));
 }
 
+/**
+ * Method to select a color.
+ * @param {*} color Pass what color to choose.
+ */
 function selectColor(color) {
+
     selectedColor = color;
+
     for (var i = 0; i < colors.length; ++i) {
         var currColor = colors[i];
         colorButtons[currColor].style.border = currColor == color ? '2px solid #789' : '2px solid #fff';
@@ -210,6 +224,10 @@ function selectColor(color) {
     drawingManager.set('polygonOptions', polygonOptions);
 }
 
+/**
+ * Method to set the color to a Shape.
+ * @param {*} color Pass what color to choose.
+ */
 function setSelectedShapeColor(color) {
     if (selectedShape) {
         if (selectedShape.type == google.maps.drawing.OverlayType.POLYLINE) {
@@ -220,6 +238,10 @@ function setSelectedShapeColor(color) {
     }
 }
 
+/**
+ * Method to init the buttons of colors..
+ * @param {*} color Pass what color to choose.
+ */
 function makeColorButton(color) {
     var button = document.createElement('span');
     button.className = 'color-button';
@@ -232,13 +254,19 @@ function makeColorButton(color) {
     return button;
 }
 
+/**
+ * Method to create a color pallet.
+ */
 function buildColorPalette() {
+
     var colorPalette = document.getElementById('color-palette');
+
     for (var i = 0; i < colors.length; ++i) {
         var currColor = colors[i];
         var colorButton = makeColorButton(currColor);
         colorPalette.appendChild(colorButton);
         colorButtons[currColor] = colorButton;
     }
+
     selectColor(colors[0]);
 }
